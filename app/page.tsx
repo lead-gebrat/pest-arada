@@ -34,13 +34,6 @@ export default function LandingPage() {
       >
         <div className="mx-auto max-w-6xl px-4 pt-10 sm:pt-14 pb-12 sm:pb-16 grid md:grid-cols-2 gap-8 items-center">
           <div>
-            <div
-              className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs"
-              style={{ borderColor: "rgba(37,89,87,0.2)" }}
-            >
-              <ShieldCheck className="h-3.5 w-3.5" style={{ color: ACCENT }} />
-              <span className="text-gray-700">{t("builtReliability")}</span>
-            </div>
             <h1 className="mt-4 text-3xl sm:text-5xl font-semibold leading-[1.05] tracking-tight">
               {t("headline")}
             </h1>
@@ -67,25 +60,14 @@ export default function LandingPage() {
           </div>
 
           <div className="relative">
-            <Card
-              className="overflow-hidden border rounded-2xl"
-              style={{
-                borderColor: "rgba(37,89,87,0.2)",
-                boxShadow: "0 8px 36px rgba(0,0,0,0.06)",
-              }}
-            >
-              <Image
-                src="/images/challenge-slide.png"
-                alt="Challenge slide"
-                width={1200}
-                height={800}
-                className="w-full h-[260px] sm:h-[340px] object-cover"
-                priority
-              />
-              <CardContent className="p-4">
-                <p className="text-sm text-gray-700">{t("headline")}</p>
-              </CardContent>
-            </Card>
+            <Image
+              src="/images/image.png"
+              alt="Challenge slide"
+              width={1600}
+              height={1000}
+              className="w-full h-[260px] sm:h-[340px] object-cover"
+              priority
+            />
           </div>
         </div>
       </section>
