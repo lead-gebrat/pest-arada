@@ -106,7 +106,6 @@ export default function LandingPage() {
           >
             <Image
               src={
-                "/placeholder.svg?height=520&width=900&query=clean%20outbreak%20map%20preview%20with%20colored%20clusters" ||
                 "/placeholder.svg"
               }
               alt="Outbreak map preview"
