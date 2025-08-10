@@ -115,7 +115,7 @@ export default function LandingPage() {
             }}
           >
             <Image
-              src={"/placeholder.svg"}
+              src={"/images/out-break.jpg"}
               alt="Outbreak map preview"
               width={900}
               height={520}
