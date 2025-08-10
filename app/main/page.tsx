@@ -5,16 +5,18 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bell, Map, Newspaper, User, Wand2, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
+import DetectWidget from "@/components/detect-widget";
 import AlertsList from "@/components/alerts-list";
 import FeedList from "@/components/feed-list";
 import OutbreakMap from "@/components/outbreak-map";
 import SuggestionsForm from "@/components/suggestions-form";
 import Profile from "@/components/profile";
+import { useAuth } from "@/components/auth/auth-context";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useI18n } from "@/components/i18n/i18n";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import Image from "next/image";
 
 type TabKey = "detect" | "alerts" | "feed" | "map" | "suggestions" | "profile";
@@ -35,7 +37,7 @@ interface User {
 
 interface DecodedToken {
   id: string;
-  username: string;
+  username: string; // Assuming the user ID is stored in the 'sub' claim of the JWT
 }
 
 export default function PlatformPage() {
@@ -51,6 +53,7 @@ export default function PlatformPage() {
       [
         { key: "alerts", label: t("tabAlerts"), icon: Bell },
         { key: "feed", label: t("tabFeed"), icon: Newspaper },
+        // Center action is Detect (separate)
         { key: "map", label: t("tabMap"), icon: Map },
         { key: "suggestions", label: t("tabSuggestions"), icon: Lightbulb },
         { key: "profile", label: t("tabProfile"), icon: User },
@@ -66,7 +69,6 @@ export default function PlatformPage() {
     const token = localStorage.getItem("token");
     if (!token) {
       console.warn("No token found, redirecting to login");
-      router.replace("/login");
       return;
     }
 
@@ -103,6 +105,7 @@ export default function PlatformPage() {
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
+
     router.push("/login");
   };
 
@@ -125,7 +128,6 @@ export default function PlatformPage() {
                 width={32}
                 height={32}
                 className="h-8 w-8 rounded-md"
-<<<<<<< HEAD
               ></Image>
             </div>
             <div className="leading-tight">
@@ -140,17 +142,6 @@ export default function PlatformPage() {
                 {user?.name || user?.email}
               </p>
             </div>
-=======
-              />
-              <Image
-                src="/images/logo.png"
-                alt="Crop Sentinel Logo"
-                width={64}
-                height={64}
-                className="h-16 w-16 rounded-md"
-              />
-            </div>
->>>>>>> 957e4f61abea4c936329a8630a77194b50abaf1b
           </div>
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
@@ -181,15 +172,7 @@ export default function PlatformPage() {
       </header>
 
       <section className="mx-auto w-full max-w-screen-md flex-1 px-4 pb-32 pt-4">
-        {tab === "detect" && (
-          <div style={{ width: "100%", height: "80vh" }}>
-            <iframe
-              src="https://arada-ai.streamlit.app/?embed=true"
-              style={{ border: "none", width: "100%", height: "100%" }}
-              allowFullScreen
-            />
-          </div>
-        )}
+        {tab === "detect" && <DetectWidget accent={ACCENT} />}
         {tab === "alerts" && <AlertsList accent={ACCENT} />}
         {tab === "feed" && <FeedList accent={ACCENT} />}
         {tab === "map" && <OutbreakMap accent={ACCENT} />}
@@ -197,13 +180,16 @@ export default function PlatformPage() {
         {tab === "profile" && <Profile accent={ACCENT} />}
       </section>
 
+      {/* Ultra-sleek bottom nav with floating Detect action (inspired by your reference) */}
       <nav className="fixed inset-x-0 bottom-3 z-40">
         <div className="mx-auto max-w-screen-sm px-4">
           <div className="relative">
+            {/* Pill background */}
             <div
               className="h-14 rounded-[22px] border backdrop-blur bg-white/80 shadow-[0_10px_30px_rgba(0,0,0,0.12)]"
               style={{ borderColor: "rgba(37,89,87,0.15)" }}
             />
+            {/* Center floating action */}
             <button
               onClick={() => setTab("detect")}
               aria-label={t("tabDetect")}
@@ -219,8 +205,11 @@ export default function PlatformPage() {
             >
               <Wand2 className="h-6 w-6" />
             </button>
+
+            {/* Icon rows */}
             <div className="absolute inset-0 grid grid-cols-5 items-center">
               {tabs.map(({ key, label, icon: Icon }, i) => {
+                // distribute two left, three right around the center FAB
                 const onClick = () => setTab(key as TabKey);
                 const active = tab === key;
                 const base =
