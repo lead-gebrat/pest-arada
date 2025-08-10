@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useI18n } from "@/components/i18n/i18n";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import Image from "next/image";
 
 type TabKey = "detect" | "alerts" | "feed" | "map" | "suggestions" | "profile";
 const ACCENT = "#255957";
@@ -44,6 +45,8 @@ export default function PlatformPage() {
   const router = useRouter();
   const [tab, setTab] = useState<TabKey>("detect");
   const [user, setUser] = useState<User | null>(null);
+
+  const BACKEND_API = process.env.NEXT_PUBLIC_BACKEND_API;
 
   const tabs = useMemo(
     () =>
@@ -86,7 +89,7 @@ export default function PlatformPage() {
 
   const fetchUser = async (id: string, token: string) => {
     try {
-      const response = await axios.get(`http://localhost:3001/user/${id}`, {
+      const response = await axios.get(`${BACKEND_API}/user/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -118,11 +121,15 @@ export default function PlatformPage() {
       >
         <div className="mx-auto w-full max-w-screen-md px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div
-              className="h-8 w-8 rounded-md"
-              style={{ background: ACCENT }}
-              aria-hidden="true"
-            />
+            <div>
+              <Image
+                src="/logo.png"
+                alt="Crop Sentinel Logo"
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-md"
+              ></Image>
+            </div>
             <div className="leading-tight">
               <p className="font-semibold text-base" style={{ color: ACCENT }}>
                 Crop Sentinel
@@ -136,7 +143,7 @@ export default function PlatformPage() {
             <Avatar className="h-8 w-8">
               {user?.profileUrl ? (
                 <AvatarImage
-                  src={user.profileUrl || "/placeholder.svg"}
+                  src={`${BACKEND_API}${user.profileUrl}` || "/placeholder.svg"}
                   alt="Me"
                 />
               ) : (

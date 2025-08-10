@@ -42,6 +42,7 @@ export default function SignUpPage() {
   const [showCreateAccount, setShowCreateAccount] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const BACKEND_API = process.env.NEXT_PUBLIC_BACKEND_API;
 
   const handleCreateAccount = async (
     event: React.FormEvent<HTMLFormElement>
@@ -67,7 +68,7 @@ export default function SignUpPage() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3001/user/create",
+        `${BACKEND_API}/user/create`,
         formData,
         {
           headers: {

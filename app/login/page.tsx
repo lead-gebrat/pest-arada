@@ -30,6 +30,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const BACKEND_API = process.env.NEXT_PUBLIC_BACKEND_API;
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -40,10 +41,7 @@ export default function LoginPage() {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/auth/login",
-        loginDto
-      );
+      const response = await axios.post(`${BACKEND_API}/auth/login`, loginDto);
       console.log("Login successful:", response.data);
 
       // Validate token before storing and redirecting
