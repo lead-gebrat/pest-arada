@@ -129,6 +129,13 @@ export default function PlatformPage() {
                 height={32}
                 className="h-8 w-8 rounded-md"
               ></Image>
+              <Image
+                src="/images/logo.png"
+                alt="Crop Sentinel Logo"
+                width={64}
+                height={64}
+                className="h-16 w-16 rounded-md"
+              ></Image>
             </div>
             <div className="leading-tight">
               <Image
