@@ -1,18 +1,26 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import LanguageSwitcher from "@/components/language-switcher"
-import { useI18n } from "@/components/i18n/i18n"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ShieldCheck, Wand2, Bell, Newspaper, Map, Lightbulb, User } from "lucide-react"
+import Image from "next/image";
+import Link from "next/link";
+import LanguageSwitcher from "@/components/language-switcher";
+import { useI18n } from "@/components/i18n/i18n";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  ShieldCheck,
+  Wand2,
+  Bell,
+  Newspaper,
+  Map,
+  Lightbulb,
+  User,
+} from "lucide-react";
 
-const ACCENT = "#255957"
+const ACCENT = "#255957";
 
 export default function LandingPage() {
-  const { t } = useI18n()
+  const { t } = useI18n();
   return (
     <main className="bg-white text-gray-900">
       <Header />
@@ -20,7 +28,8 @@ export default function LandingPage() {
       <section
         className="relative overflow-hidden"
         style={{
-          background: "radial-gradient(1200px 300px at 50% -50px, rgba(37,89,87,0.08), rgba(255,255,255,0) 60%)",
+          background:
+            "radial-gradient(1200px 300px at 50% -50px, rgba(37,89,87,0.08), rgba(255,255,255,0) 60%)",
         }}
       >
         <div className="mx-auto max-w-6xl px-4 pt-10 sm:pt-14 pb-12 sm:pb-16 grid md:grid-cols-2 gap-8 items-center">
@@ -32,11 +41,16 @@ export default function LandingPage() {
               <ShieldCheck className="h-3.5 w-3.5" style={{ color: ACCENT }} />
               <span className="text-gray-700">{t("builtReliability")}</span>
             </div>
-            <h1 className="mt-4 text-3xl sm:text-5xl font-semibold leading-[1.05] tracking-tight">{t("headline")}</h1>
+            <h1 className="mt-4 text-3xl sm:text-5xl font-semibold leading-[1.05] tracking-tight">
+              {t("headline")}
+            </h1>
             <p className="mt-3 text-gray-600 max-w-prose">{t("heroLead")}</p>
             <div className="mt-5 flex items-center gap-3">
               <Link href="/signup">
-                <Button className="h-10 px-5" style={{ background: ACCENT, color: "white" }}>
+                <Button
+                  className="h-10 px-5"
+                  style={{ background: ACCENT, color: "white" }}
+                >
                   {t("getStarted")}
                 </Button>
               </Link>
@@ -55,7 +69,10 @@ export default function LandingPage() {
           <div className="relative">
             <Card
               className="overflow-hidden border rounded-2xl"
-              style={{ borderColor: "rgba(37,89,87,0.2)", boxShadow: "0 8px 36px rgba(0,0,0,0.06)" }}
+              style={{
+                borderColor: "rgba(37,89,87,0.2)",
+                boxShadow: "0 8px 36px rgba(0,0,0,0.06)",
+              }}
             >
               <Image
                 src="/images/challenge-slide.png"
@@ -75,7 +92,10 @@ export default function LandingPage() {
 
       <section id="features" className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
         <div className="mb-6 flex items-center justify-between">
-          <Badge variant="secondary" style={{ background: "rgba(37,89,87,0.08)", color: ACCENT }}>
+          <Badge
+            variant="secondary"
+            style={{ background: "rgba(37,89,87,0.08)", color: ACCENT }}
+          >
             {t("features")}
           </Badge>
           <LanguageSwitcher compact />
@@ -86,7 +106,9 @@ export default function LandingPage() {
       <section id="map" className="mx-auto max-w-6xl px-4 py-12 sm:py-16">
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">{t("outbreakHeadline")}</h2>
+            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+              {t("outbreakHeadline")}
+            </h2>
             <ul className="text-sm text-gray-700 list-disc pl-5 space-y-1">
               <li>{t("outbreakB1")}</li>
               <li>{t("outbreakB2")}</li>
@@ -94,7 +116,10 @@ export default function LandingPage() {
             </ul>
             <div className="pt-2">
               <Link href="/login">
-                <Button className="mt-2" style={{ background: ACCENT, color: "white" }}>
+                <Button
+                  className="mt-2"
+                  style={{ background: ACCENT, color: "white" }}
+                >
                   {t("launchApp")}
                 </Button>
               </Link>
@@ -102,12 +127,13 @@ export default function LandingPage() {
           </div>
           <Card
             className="overflow-hidden border rounded-2xl"
-            style={{ borderColor: "rgba(37,89,87,0.2)", boxShadow: "0 6px 30px rgba(0,0,0,0.06)" }}
+            style={{
+              borderColor: "rgba(37,89,87,0.2)",
+              boxShadow: "0 6px 30px rgba(0,0,0,0.06)",
+            }}
           >
             <Image
-              src={
-                "/placeholder.svg"
-              }
+              src={"/placeholder.svg"}
               alt="Outbreak map preview"
               width={900}
               height={520}
@@ -121,20 +147,29 @@ export default function LandingPage() {
       <section
         className="mx-auto max-w-6xl px-4 py-12 sm:py-16"
         style={{
-          background: "radial-gradient(1000px 200px at 50% 0, rgba(37,89,87,0.08), rgba(255,255,255,0) 60%)",
+          background:
+            "radial-gradient(1000px 200px at 50% 0, rgba(37,89,87,0.08), rgba(255,255,255,0) 60%)",
         }}
       >
         <div
           className="rounded-2xl border overflow-hidden"
-          style={{ borderColor: "rgba(37,89,87,0.18)", boxShadow: "0 10px 40px rgba(0,0,0,0.06)" }}
+          style={{
+            borderColor: "rgba(37,89,87,0.18)",
+            boxShadow: "0 10px 40px rgba(0,0,0,0.06)",
+          }}
         >
           <div className="p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
             <div className="flex-1">
-              <h3 className="text-xl sm:text-2xl font-semibold">{t("ctaTitle")}</h3>
+              <h3 className="text-xl sm:text-2xl font-semibold">
+                {t("ctaTitle")}
+              </h3>
               <p className="text-gray-600 mt-1">{t("ctaDesc")}</p>
             </div>
             <Link href="/login">
-              <Button className="h-10 px-5" style={{ background: ACCENT, color: "white" }}>
+              <Button
+                className="h-10 px-5"
+                style={{ background: ACCENT, color: "white" }}
+              >
                 {t("launchApp")}
               </Button>
             </Link>
@@ -144,9 +179,7 @@ export default function LandingPage() {
 
       <Footer />
     </main>
-  )
-
- 
+  );
 
   function Header() {
     return (
@@ -160,21 +193,20 @@ export default function LandingPage() {
       >
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-           <Image
-                           src="/logo.png"
-                           alt="Crop Sentinel Logo"
-                           width={32}
-                           height={32}
-                           className="h-12 w-12 rounded-md"
-                         ></Image>
-                         <Image
-                           src="/images/logo.png"
-                           alt="Crop Sentinel Logo"
-                           width={64}
-                           height={64}
-                           className="h-16 w-16 rounded-md"
-                         ></Image>
-           
+            <Image
+              src="/logo.png"
+              alt="Crop Sentinel Logo"
+              width={32}
+              height={32}
+              className="h-12 w-12 rounded-md"
+            ></Image>
+            <Image
+              src="/name.png"
+              alt="Crop Sentinel Logo"
+              width={64}
+              height={64}
+              className="h-16 w-16 rounded-md"
+            ></Image>
           </Link>
           <nav className="hidden sm:flex items-center gap-6 text-sm">
             <a href="#features" className="text-gray-700 hover:text-gray-900">
@@ -197,23 +229,51 @@ export default function LandingPage() {
           </div>
         </div>
       </header>
-    )
+    );
   }
 
   function FeaturesGrid() {
     const items = [
-      { icon: Wand2, title: t("tabDetect"), desc: "Upload or snap a photo. Get instant, readable results." },
-      { icon: Bell, title: t("tabAlerts"), desc: "See high‑severity risks first. Never miss what matters." },
-      { icon: Newspaper, title: t("tabFeed"), desc: "Actionable insights and updates—minimal noise." },
-      { icon: Map, title: t("tabMap"), desc: "Watch clusters evolve and plan in real time." },
-      { icon: Lightbulb, title: t("tabSuggestions"), desc: "Clear, practical steps tailored to your crop." },
-      { icon: User, title: t("tabProfile"), desc: "Your regions, your crops, your preferences." },
-    ] as const
+      {
+        icon: Wand2,
+        title: t("tabDetect"),
+        desc: "Upload or snap a photo. Get instant, readable results.",
+      },
+      {
+        icon: Bell,
+        title: t("tabAlerts"),
+        desc: "See high‑severity risks first. Never miss what matters.",
+      },
+      {
+        icon: Newspaper,
+        title: t("tabFeed"),
+        desc: "Actionable insights and updates—minimal noise.",
+      },
+      {
+        icon: Map,
+        title: t("tabMap"),
+        desc: "Watch clusters evolve and plan in real time.",
+      },
+      {
+        icon: Lightbulb,
+        title: t("tabSuggestions"),
+        desc: "Clear, practical steps tailored to your crop.",
+      },
+      {
+        icon: User,
+        title: t("tabProfile"),
+        desc: "Your regions, your crops, your preferences.",
+      },
+    ] as const;
 
     return (
       <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((f, i) => (
-          <Card key={i} className="border rounded-2xl" style={{ borderColor: "rgba(37,89,87,0.18)" }}>
+          <Card
+            key={i}
+            className="border rounded-2xl"
+            style={{ borderColor: "rgba(37,89,87,0.18)" }}
+          >
             <CardContent className="p-5">
               <div className="flex items-start gap-3">
                 <div
@@ -232,14 +292,17 @@ export default function LandingPage() {
           </Card>
         ))}
       </div>
-    )
+    );
   }
 
   function Footer() {
     return (
-      <footer className="border-t" style={{ borderColor: "rgba(37,89,87,0.12)" }}>
+      <footer
+        className="border-t"
+        style={{ borderColor: "rgba(37,89,87,0.12)" }}
+      >
         <div className="mx-auto max-w-6xl px-4 py-6 text-sm text-gray-600 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Crop Sentinel</p>
+          <p>© {new Date().getFullYear()} ARADA</p>
           <div className="flex items-center gap-4">
             <a href="#features" className="hover:text-gray-900">
               {t("features")}
@@ -253,6 +316,6 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
-    )
+    );
   }
 }

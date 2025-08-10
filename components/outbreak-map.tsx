@@ -5,7 +5,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useI18n } from "@/components/i18n/i18n";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((m) => m.MapContainer),
@@ -38,16 +37,24 @@ export default function OutbreakMap({ accent = "#255957" }: Props) {
   const { t } = useI18n();
   const [mounted, setMounted] = useState(false);
   const [reports, setReports] = useState<Report[]>([]);
+  const [L, setL] = useState<any>(null); // leaflet instance
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+
+    // dynamically import leaflet only in the browser
+    import("leaflet").then((leaflet) => {
+      setL(leaflet);
+    });
+  }, []);
+
   const center = useMemo<[number, number]>(() => [0.0236, 37.9062], []);
 
   const fetchReports = async () => {
     try {
-      const res = await fetch("http://localhost:3001/reports");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/reports`);
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data: Report[] = await res.json();
-      console.log("Fetched reports:", data);
       setReports(data);
     } catch (err) {
       console.error("Failed to fetch reports:", err);
@@ -59,32 +66,29 @@ export default function OutbreakMap({ accent = "#255957" }: Props) {
   }, []);
 
   const colors = [
-    "#ef4444", // red
-    "#f59e0b", // orange
-    "#10b981", // green
-    "#3b82f6", // blue
-    "#8b5cf6", // purple
-    "#ec4899", // pink
-    "#6b7280", // gray
+    "#ef4444",
+    "#f59e0b",
+    "#10b981",
+    "#3b82f6",
+    "#8b5cf6",
+    "#ec4899",
+    "#6b7280",
   ];
 
-  // Store the disease-color map across renders
   const diseaseColorMap = useRef<Map<string, string>>(new Map());
 
   const getDiseaseColor = (disease: string) => {
     const normalized = disease.trim().toLowerCase();
-
     if (!diseaseColorMap.current.has(normalized)) {
       const assignedColor =
         colors[diseaseColorMap.current.size % colors.length];
       diseaseColorMap.current.set(normalized, assignedColor);
     }
-
     return diseaseColorMap.current.get(normalized)!;
   };
 
-  // Create a custom icon for each disease based on its color
   const getCustomIcon = (disease: string) => {
+    if (!L) return undefined; // L not ready yet
     const color = getDiseaseColor(disease);
     return L.divIcon({
       html: `
@@ -100,7 +104,7 @@ export default function OutbreakMap({ accent = "#255957" }: Props) {
     });
   };
 
-  if (!mounted) {
+  if (!mounted || !L) {
     return (
       <Card
         className="h-[420px] w-full rounded-xl overflow-hidden border"
@@ -118,12 +122,7 @@ export default function OutbreakMap({ accent = "#255957" }: Props) {
       className="h-[420px] w-full rounded-xl overflow-hidden border"
       style={{ borderColor: "rgba(37,89,87,0.2)" }}
     >
-      <MapContainer
-        center={center}
-        zoom={6}
-        className="h-full w-full"
-        style={{ outline: "none" }}
-      >
+      <MapContainer center={center} zoom={6} className="h-full w-full">
         <TileLayer
           attribution="© OpenStreetMap"
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

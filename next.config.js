@@ -1,15 +1,15 @@
 // next.config.js
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "3000",
-        pathname: "/uploads/**",
+        protocol: "https",
+        hostname: "arada-1.onrender.com", // full domain
+        pathname: "/uploads/**", // match uploaded images
       },
     ],
-    domains: [],
+    domains: [], // can add extra domains here if needed
   },
   webpack(config) {
     config.module.rules.push({
@@ -19,3 +19,5 @@ module.exports = {
     return config;
   },
 };
+
+module.exports = nextConfig;
