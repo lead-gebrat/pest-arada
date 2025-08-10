@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { useI18n } from "@/components/i18n/i18n";
 import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 
 const MapContainer = dynamic(
   () => import("react-leaflet").then((m) => m.MapContainer),
@@ -14,10 +15,9 @@ const TileLayer = dynamic(
   () => import("react-leaflet").then((m) => m.TileLayer),
   { ssr: false }
 );
-const CircleMarker = dynamic(
-  () => import("react-leaflet").then((m) => m.CircleMarker),
-  { ssr: false }
-);
+const Marker = dynamic(() => import("react-leaflet").then((m) => m.Marker), {
+  ssr: false,
+});
 const Popup = dynamic(() => import("react-leaflet").then((m) => m.Popup), {
   ssr: false,
 });
@@ -68,7 +68,7 @@ export default function OutbreakMap({ accent = "#255957" }: Props) {
     "#6b7280", // gray
   ];
 
-  // ✅ Store the disease-color map across renders
+  // Store the disease-color map across renders
   const diseaseColorMap = useRef<Map<string, string>>(new Map());
 
   const getDiseaseColor = (disease: string) => {
@@ -81,6 +81,23 @@ export default function OutbreakMap({ accent = "#255957" }: Props) {
     }
 
     return diseaseColorMap.current.get(normalized)!;
+  };
+
+  // Create a custom icon for each disease based on its color
+  const getCustomIcon = (disease: string) => {
+    const color = getDiseaseColor(disease);
+    return L.divIcon({
+      html: `
+        <svg width="24" height="36" viewBox="0 0 24 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0C5.373 0 0 5.373 0 12C0 21.75 12 36 12 36C12 36 24 21.75 24 12C24 5.373 18.627 0 12 0Z" fill="${color}" fill-opacity="0.85"/>
+          <circle cx="12" cy="12" r="6" fill="white"/>
+        </svg>
+      `,
+      className: "custom-icon",
+      iconSize: [24, 36],
+      iconAnchor: [12, 36],
+      popupAnchor: [0, -36],
+    });
   };
 
   if (!mounted) {
@@ -112,16 +129,10 @@ export default function OutbreakMap({ accent = "#255957" }: Props) {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {reports.map((report) => (
-          <CircleMarker
+          <Marker
             key={report.id}
-            center={[report.location.latitude, report.location.longitude]}
-            radius={12}
-            pathOptions={{
-              color: "white",
-              weight: 2,
-              fillColor: getDiseaseColor(report.diseaseName),
-              fillOpacity: 0.85,
-            }}
+            position={[report.location.latitude, report.location.longitude]}
+            icon={getCustomIcon(report.diseaseName)}
           >
             <Popup>
               <div className="space-y-1">
@@ -138,7 +149,7 @@ export default function OutbreakMap({ accent = "#255957" }: Props) {
                 </p>
               </div>
             </Popup>
-          </CircleMarker>
+          </Marker>
         ))}
       </MapContainer>
     </Card>

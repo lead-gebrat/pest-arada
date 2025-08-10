@@ -131,9 +131,13 @@ export default function PlatformPage() {
               ></Image>
             </div>
             <div className="leading-tight">
-              <p className="font-semibold text-base" style={{ color: ACCENT }}>
-                Crop Sentinel
-              </p>
+              <Image
+                src="/name.png"
+                alt="Crop Sentinel Logo"
+                width={42}
+                height={32}
+                className="h-8 w-12 rounded-md"
+              ></Image>
               <p className="text-xs text-gray-500">
                 {user?.name || user?.email}
               </p>
