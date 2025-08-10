@@ -129,15 +129,15 @@ export default function PlatformPage() {
                 height={32}
                 className="h-8 w-8 rounded-md"
               ></Image>
+             <Image
+                                        src="/images/logo.png"
+                                        alt="Crop Sentinel Logo"
+                                        width={64}
+                                        height={64}
+                                        className="h-16 w-16 rounded-md"
+                                      ></Image>
             </div>
-            <div className="leading-tight">
-              <p className="font-semibold text-base" style={{ color: ACCENT }}>
-                Crop Sentinel
-              </p>
-              <p className="text-xs text-gray-500">
-                {user?.name || user?.email}
-              </p>
-            </div>
+          
           </div>
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">

@@ -146,10 +146,7 @@ export default function LandingPage() {
     </main>
   )
 
-  function PlaceholderLogo() {
-    // Placeholder block instead of your uploaded logo (per request)
-    return <div className="h-8 w-8 rounded-md" style={{ background: ACCENT }} aria-hidden="true" />
-  }
+ 
 
   function Header() {
     return (
@@ -163,13 +160,21 @@ export default function LandingPage() {
       >
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <PlaceholderLogo />
-            <div className="leading-tight">
-              <p className="font-semibold" style={{ color: ACCENT }}>
-                Crop Sentinel
-              </p>
-              <p className="text-xs text-gray-500">AI Early Warning</p>
-            </div>
+           <Image
+                           src="/logo.png"
+                           alt="Crop Sentinel Logo"
+                           width={32}
+                           height={32}
+                           className="h-12 w-12 rounded-md"
+                         ></Image>
+                         <Image
+                           src="/images/logo.png"
+                           alt="Crop Sentinel Logo"
+                           width={64}
+                           height={64}
+                           className="h-16 w-16 rounded-md"
+                         ></Image>
+           
           </Link>
           <nav className="hidden sm:flex items-center gap-6 text-sm">
             <a href="#features" className="text-gray-700 hover:text-gray-900">
