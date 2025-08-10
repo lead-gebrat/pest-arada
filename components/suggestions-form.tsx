@@ -1,114 +1,191 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { User, Bot, Loader2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles } from "lucide-react"
-import { useI18n } from "@/components/i18n/i18n"
 
-type Props = { accent?: string }
+interface Message {
+  id: string
+  content: string
+  sender: "user" | "bot"
+  language?: string
+}
 
-export default function SuggestionsForm({ accent = "#255957" }: Props) {
-  const { t } = useI18n()
-  const [crop, setCrop] = useState("Maize")
-  const [stage, setStage] = useState("Vegetative")
-  const [notes, setNotes] = useState("")
-  const [tips, setTips] = useState<string[]>([])
+export default function SuggestionsChatbot({ accent = "#255957" }) {
+  const greetings = [
+  "Hello! I'm your AI assistant for agricultural advice. How can I help you today? (English)",
+  "ሰላም! እኔ ለግብርና ምክር የሚረዳዎ ኤአይ እባላለሁ። እንዴት ልረዳዎ? (Amharic)",
+  "Akkam! Ani gorsa qonnaa siif kennuuf qopheedha. Maal siif godhu? (Afaan Oromoo)",
+  "ሰላም! ንስኻ ምሕላፍ ኤአይ ነኻ። እንታይ እንደምትረዳ እትፈልጥ? (Tigrinya)"
+];
 
-  const generate = () => {
-    const out: string[] = []
-    if (crop === "Maize" && stage === "Vegetative") {
-      out.push("Scout daily for Fall Armyworm; check whorl leaves.")
-      out.push("Apply pheromone traps at field edges.")
+const [messages, setMessages] = useState<Message[]>([
+  {
+    id: "bot-1",
+    content: greetings.join("\n\n"),
+    sender: "bot",
+    language: "en",
+  },
+])
+
+  const [input, setInput] = useState("")
+  const [loading, setLoading] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  const detectLanguage = (text: string): string => {
+    const cleanText = text.toLowerCase().trim()
+    const amharicPattern = /[\u1200-\u137F]/
+    if (amharicPattern.test(text)) return "am"
+
+    const oromoWords = ["akkam", "maal", "eessa", "yeroo", "bishaan", "qonnaa", "koo", "jiru","kenna"]
+    const oromoWordCount = oromoWords.filter((w) => cleanText.includes(w)).length
+    if (oromoWordCount >= 2) return "or"
+
+    return "en"
+  }
+
+  async function sendMessage() {
+    if (!input.trim()) return
+    const userLang = detectLanguage(input)
+
+    const userMsg: Message = {
+      id: `user-${Date.now()}`,
+      content: input.trim(),
+      sender: "user",
+      language: userLang,
     }
-    if (crop === "Wheat") out.push("Rotate fungicide modes to prevent resistance.")
-    if (stage === "Flowering") out.push("Avoid stress—irrigate early; maintain soil moisture.")
-    if (notes.toLowerCase().includes("humidity")) out.push("High humidity—ventilate and avoid overhead irrigation.")
-    if (out.length === 0) out.push("No specific risks detected. Follow standard IPM checklist.")
-    setTips(out)
+    setMessages((prev) => [...prev, userMsg])
+    setInput("")
+    setLoading(true)
+
+    try {
+      const res = await fetch("/api/ai/respond", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMsg.content, language: userLang }),
+      })
+      if (!res.ok) throw new Error("Failed to get AI response")
+      const data = await res.json()
+
+      const botMsg: Message = {
+        id: `bot-${Date.now()}`,
+        content: data.aiResponse,
+        sender: "bot",
+        language: userLang,
+      }
+      setMessages((prev) => [...prev, botMsg])
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-error-${Date.now()}`,
+          content: "Sorry, I couldn't fetch advice. Please try again.",
+          sender: "bot",
+          language: "en",
+        },
+      ])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
+    }
   }
 
   return (
-    <div className="space-y-4">
-      <Card className="border" style={{ borderColor: "rgba(37,89,87,0.2)" }}>
-        <CardHeader>
-          <CardTitle>{t("smartTips")}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="space-y-2">
-              <Label>{t("crop")}</Label>
-              <Select value={crop} onValueChange={setCrop}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("crop")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {["Maize", "Wheat", "Potato", "Beans", "Rice"].map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>{t("stage")}</Label>
-              <Select value={stage} onValueChange={setStage}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("stage")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {["Seedling", "Vegetative", "Flowering", "Maturity"].map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label>{t("notes")}</Label>
-            <Textarea
-              placeholder="Weather, humidity, recent observations..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </div>
-          <Button className="gap-2" onClick={generate} style={{ background: accent, color: "white" }}>
-            <Sparkles className="h-4 w-4" />
-            {t("generate")}
-          </Button>
-        </CardContent>
-      </Card>
+    <Card className="max-w-md mx-auto border" style={{ borderColor: "rgba(37,89,87,0.2)" }}>
+      <CardHeader>
+        <CardTitle>Agri AI Chatbot</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col h-[500px]">
+        <ScrollArea className="flex-1 px-4 space-y-4 overflow-y-auto">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`flex gap-3 ${
+                msg.sender === "user" ? "justify-end" : "justify-start"
+              }`}
+            >
+              {msg.sender === "bot" && (
+                <Avatar className="h-8 w-8 flex-shrink-0 mt-1 bg-[#255957]">
+<AvatarFallback className=" text-black text-xs">
+  <Bot className="h-4 w-4" stroke="currentColor" />
+</AvatarFallback>
 
-      {tips.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" style={{ background: "rgba(37,89,87,0.08)", color: accent }}>
-              {t("recommendations")}
-            </Badge>
-            <span className="text-sm text-gray-600">
-              {tips.length} {t("tipsCount")}
-            </span>
-          </div>
-          <ul className="space-y-2">
-            {tips.map((ttext, i) => (
-              <li
-                key={i}
-                className="rounded-lg border p-3 text-sm text-gray-800"
-                style={{ borderColor: "rgba(37,89,87,0.2)" }}
+
+                </Avatar>
+              )}
+              <div
+               className={`max-w-[70%] rounded-lg p-3 text-sm whitespace-pre-wrap break-words ${
+  msg.sender === "user" ? "text-white" : "bg-muted text-foreground"
+}`}
+style={msg.sender === "user" ? { backgroundColor: "#255957" } : undefined}
+
               >
-                {ttext}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+                {msg.content}
+                
+              </div>
+              {msg.sender === "user" && (
+                <Avatar className="h-8 w-8 flex-shrink-0 mt-1">
+                  <AvatarFallback className="bg-secondary text-xs">
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+              )}
+            </div>
+          ))}
+          {loading && (
+            <div className="flex gap-3 justify-start">
+              <Avatar className="h-8 w-8 flex-shrink-0 mt-1">
+                <AvatarFallback className="bg-[#255957] text-white text-xs">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                </AvatarFallback>
+              </Avatar>
+              <div className="bg-muted rounded-lg p-3 text-sm max-w-[70%]">
+                Typing...
+              </div>
+            </div>
+          )}
+          <div ref={scrollRef} />
+        </ScrollArea>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            sendMessage()
+          }}
+          className="flex gap-2 mt-4"
+        >
+          <Input
+            placeholder="Ask your farming question..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            disabled={loading}
+            className="flex-1 text-sm"
+          />
+          <Button
+            type="submit"
+            disabled={loading || !input.trim()}
+            style={{ background: accent, color: "white" }}
+          >
+            Send
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   )
 }
